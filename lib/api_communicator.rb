@@ -4,14 +4,14 @@ require 'pry'
 
 def get_character_movies_from_api(character)
   #make the web request
-  all_characters = RestClient.get('http://www.swapi.co/api/people/')
-  character_hash = JSON.parse(all_characters)
+  # all_characters = RestClient.get('http://www.swapi.co/api/people/')
+  # character_hash = JSON.parse(all_characters)
 
-  results = character_hash["results"].select do |info|
+  found = get_every_character_info.select do |info|
     info["name"].downcase == character
   end
 
-  films = results[0]["films"]
+  films = found[0]["films"]
 
   #hash solution
   # ordered_films = {}
@@ -24,11 +24,21 @@ def get_character_movies_from_api(character)
   # ordered_films
 
   ordered_films = films.map do |film|
-    this_site = RestClient.get(film)
-    parsed_site = JSON.parse(this_site)
-    parsed_site["title"]
+    JSON.parse(RestClient.get(film))["title"]
   end
 end
+
+def get_every_character_info
+  n = 1
+  #pull from API and parse it, then find the ["results"], which are the actual characters
+  results = JSON.parse(RestClient.get("http://www.swapi.co/api/people/?page=#{n}"))["results"]
+  until JSON.parse(RestClient.get("http://www.swapi.co/api/people/?page=#{n}"))["next"] == nil
+    n += 1
+    results += JSON.parse(RestClient.get("http://www.swapi.co/api/people/?page=#{n}"))["results"]
+  end
+  results
+end
+
 
 def parse_character_movies(films_hash)
   # some iteration magic and puts out the movies in a nice list
