@@ -13,35 +13,31 @@ def get_character_movies_from_api(character)
 
   films = results[0]["films"]
 
-  # final_films = Hash[films.each_with_index.map do |e, index|
-  #    this_site = RestClient.get(e)
-  #    parsed_site = JSON.parse(this_site)
-  #    final_films[index + 1] = parsed_site["title"]end]
+  #hash solution
+  # ordered_films = {}
+  # films.each_with_index do |e, index|
+  #   this_site = RestClient.get(e)
+  #   parsed_site = JSON.parse(this_site)
+  #   ordered_films[index + 1] = parsed_site["title"]
+  # end
+  #
+  # ordered_films
 
-  ordered_films = {}
-  films.each_with_index do |e, index|
-    this_site = RestClient.get(e)
+  ordered_films = films.map do |film|
+    this_site = RestClient.get(film)
     parsed_site = JSON.parse(this_site)
-    ordered_films[index + 1] = parsed_site["title"]
+    parsed_site["title"]
   end
-
-
-  # iterate over the character hash to find the collection of `films` for the given
-  #   `character`
-  # collect those film API urls, make a web request to each URL to get the info
-  #  for that film
-  # return value of this method should be collection of info about each film.
-  #  i.e. an array of hashes in which each hash reps a given film
-  # this collection will be the argument given to `parse_character_movies`
-  #  and that method will do some nice presentation stuff: puts out a list
-  #  of movies by title. play around with puts out other info about a given film.
-  ordered_films
 end
 
 def parse_character_movies(films_hash)
   # some iteration magic and puts out the movies in a nice list
-  films_hash.each do |number, film|
-    puts "#{number} #{film}"
+  #this is for a hash
+  # films_hash.each do |number, film|
+  #   puts "#{number} #{film}"
+  # end
+  films_hash.each_with_index do |film, index|
+    puts "#{index +1} #{film}"
   end
 end
 
